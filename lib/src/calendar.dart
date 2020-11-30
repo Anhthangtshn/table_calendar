@@ -134,6 +134,12 @@ class TableCalendar extends StatefulWidget {
   /// Used to show/hide Header.
   final bool headerVisible;
 
+  /// Used to add footer for calendar.
+  final Widget footer;
+
+  /// Used to add today button for calendar.
+  final Widget todayWidget;
+
   /// Function deciding whether given day should be enabled or not.
   /// If `false` is returned, this day will be unavailable.
   final EnabledDayPredicate enabledDayPredicate;
@@ -210,6 +216,8 @@ class TableCalendar extends StatefulWidget {
     this.daysOfWeekStyle = const DaysOfWeekStyle(),
     this.headerStyle = const HeaderStyle(),
     this.builders = const CalendarBuilders(),
+    this.footer,
+    this.todayWidget,
   })  : assert(calendarController != null),
         assert(availableCalendarFormats.keys.contains(initialCalendarFormat)),
         assert(availableCalendarFormats.length <= CalendarFormat.values.length),
@@ -425,6 +433,11 @@ class _TableCalendarState extends State<TableCalendar>
       children.insert(3, _buildFormatButton());
     }
 
+    if (widget.todayWidget != null) {
+      children.add(const SizedBox(width: 8.0));
+      children.add(widget.todayWidget);
+    }
+
     return Container(
       decoration: widget.headerStyle.decoration,
       margin: widget.headerStyle.headerMargin,
@@ -489,7 +502,12 @@ class _TableCalendarState extends State<TableCalendar>
       case AvailableGestures.all:
         wrappedChild = _buildVerticalSwipeWrapper(
           child: _buildHorizontalSwipeWrapper(
-            child: wrappedChild,
+            child: Column(
+              children: [
+                wrappedChild,
+                widget.footer != null ? widget.footer : SizedBox()
+              ],
+            ),
           ),
         );
         break;
