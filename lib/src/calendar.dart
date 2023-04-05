@@ -74,41 +74,41 @@ class TableCalendar extends StatefulWidget {
   final Map<DateTime, List> holidays;
 
   /// Called whenever any day gets tapped.
-  final OnDaySelected onDaySelected;
+  final OnDaySelected? onDaySelected;
 
   /// Called whenever any day gets long pressed.
-  final OnDaySelected onDayLongPressed;
+  final OnDaySelected? onDayLongPressed;
 
   /// Called whenever any unavailable day gets tapped.
   /// Replaces `onDaySelected` for those days.
-  final VoidCallback onUnavailableDaySelected;
+  final VoidCallback? onUnavailableDaySelected;
 
   /// Called whenever any unavailable day gets long pressed.
   /// Replaces `onDaySelected` for those days.
-  final VoidCallback onUnavailableDayLongPressed;
+  final VoidCallback? onUnavailableDayLongPressed;
 
   /// Called whenever header gets tapped.
-  final HeaderGestureCallback onHeaderTapped;
+  final HeaderGestureCallback? onHeaderTapped;
 
   /// Called whenever header gets long pressed.
-  final HeaderGestureCallback onHeaderLongPressed;
+  final HeaderGestureCallback? onHeaderLongPressed;
 
   /// Called whenever the range of visible days changes.
-  final OnVisibleDaysChanged onVisibleDaysChanged;
+  final OnVisibleDaysChanged? onVisibleDaysChanged;
 
   /// Called once when the CalendarController gets initialized.
-  final OnCalendarCreated onCalendarCreated;
+  final OnCalendarCreated? onCalendarCreated;
 
   /// Initially selected DateTime. Usually it will be `DateTime.now()`.
-  final DateTime initialSelectedDay;
+  final DateTime? initialSelectedDay;
 
   /// The first day of `TableCalendar`.
   /// Days before it will use `unavailableStyle` and run `onUnavailableDaySelected` callback.
-  final DateTime startDay;
+  final DateTime? startDay;
 
   /// The last day of `TableCalendar`.
   /// Days after it will use `unavailableStyle` and run `onUnavailableDaySelected` callback.
-  final DateTime endDay;
+  final DateTime? endDay;
 
   /// List of days treated as weekend days.
   /// Use built-in `DateTime` weekday constants (e.g. `DateTime.monday`) instead of `int` literals (e.q. `1`).
@@ -135,17 +135,17 @@ class TableCalendar extends StatefulWidget {
   final bool headerVisible;
 
   /// Used to add footer for calendar.
-  final Widget footer;
+  final Widget? footer;
 
   /// Used to add today button for calendar.
-  final Widget todayWidget;
+  final Widget? todayWidget;
 
   /// Function deciding whether given day should be enabled or not.
   /// If `false` is returned, this day will be unavailable.
-  final EnabledDayPredicate enabledDayPredicate;
+  final EnabledDayPredicate? enabledDayPredicate;
 
   /// Used for setting the height of `TableCalendar`'s rows.
-  final double rowHeight;
+  final double? rowHeight;
 
   /// Animation to run when `CalendarFormat` gets changed.
   final FormatAnimation formatAnimation;
@@ -178,8 +178,8 @@ class TableCalendar extends StatefulWidget {
   final CalendarBuilders builders;
 
   TableCalendar({
-    Key key,
-    @required this.calendarController,
+    Key? key,
+    required this.calendarController,
     this.locale,
     this.events = const {},
     this.holidays = const {},
@@ -218,10 +218,8 @@ class TableCalendar extends StatefulWidget {
     this.builders = const CalendarBuilders(),
     this.footer,
     this.todayWidget,
-  })  : assert(calendarController != null),
-        assert(availableCalendarFormats.keys.contains(initialCalendarFormat)),
+  })  : assert(availableCalendarFormats.keys.contains(initialCalendarFormat)),
         assert(availableCalendarFormats.length <= CalendarFormat.values.length),
-        assert(weekendDays != null),
         assert(weekendDays.isNotEmpty
             ? weekendDays.every(
                 (day) => day >= DateTime.monday && day <= DateTime.sunday)
@@ -241,14 +239,14 @@ class _TableCalendarState extends State<TableCalendar>
     widget.calendarController._init(
       events: widget.events,
       holidays: widget.holidays,
-      initialDay: widget.initialSelectedDay,
+      initialDay: widget.initialSelectedDay!,
       initialFormat: widget.initialCalendarFormat,
       availableCalendarFormats: widget.availableCalendarFormats,
       useNextCalendarFormat: widget.headerStyle.formatButtonShowsNext,
       startingDayOfWeek: widget.startingDayOfWeek,
       selectedDayCallback: _selectedDayCallback,
-      onVisibleDaysChanged: widget.onVisibleDaysChanged,
-      onCalendarCreated: widget.onCalendarCreated,
+      onVisibleDaysChanged: widget.onVisibleDaysChanged!,
+      onCalendarCreated: widget.onCalendarCreated!,
       includeInvisibleDays: widget.calendarStyle.outsideDaysVisible,
     );
   }
@@ -273,7 +271,7 @@ class _TableCalendarState extends State<TableCalendar>
 
   void _selectedDayCallback(DateTime day) {
     if (widget.onDaySelected != null) {
-      widget.onDaySelected(
+      widget.onDaySelected?.call(
         day,
         widget.calendarController.visibleEvents[_getEventKey(day)] ?? [],
         widget.calendarController.visibleHolidays[_getHolidayKey(day)] ?? [],
@@ -302,7 +300,7 @@ class _TableCalendarState extends State<TableCalendar>
 
   void _onDayLongPressed(DateTime day) {
     if (widget.onDayLongPressed != null) {
-      widget.onDayLongPressed(
+      widget.onDayLongPressed?.call(
         day,
         widget.calendarController.visibleEvents[_getEventKey(day)] ?? [],
         widget.calendarController.visibleHolidays[_getHolidayKey(day)] ?? [],
@@ -328,49 +326,49 @@ class _TableCalendarState extends State<TableCalendar>
 
   void _onUnavailableDaySelected() {
     if (widget.onUnavailableDaySelected != null) {
-      widget.onUnavailableDaySelected();
+      widget.onUnavailableDaySelected?.call();
     }
   }
 
   void _onUnavailableDayLongPressed() {
     if (widget.onUnavailableDayLongPressed != null) {
-      widget.onUnavailableDayLongPressed();
+      widget.onUnavailableDayLongPressed?.call();
     }
   }
 
   void _onHeaderTapped() {
     if (widget.onHeaderTapped != null) {
-      widget.onHeaderTapped(widget.calendarController.focusedDay);
+      widget.onHeaderTapped?.call(widget.calendarController.focusedDay);
     }
   }
 
   void _onHeaderLongPressed() {
     if (widget.onHeaderLongPressed != null) {
-      widget.onHeaderLongPressed(widget.calendarController.focusedDay);
+      widget.onHeaderLongPressed?.call(widget.calendarController.focusedDay);
     }
   }
 
   bool _isDayUnavailable(DateTime day) {
     return (widget.startDay != null &&
             day.isBefore(
-                widget.calendarController._normalizeDate(widget.startDay))) ||
+                widget.calendarController._normalizeDate(widget.startDay!))) ||
         (widget.endDay != null &&
             day.isAfter(
-                widget.calendarController._normalizeDate(widget.endDay))) ||
+                widget.calendarController._normalizeDate(widget.endDay!))) ||
         (!_isDayEnabled(day));
   }
 
   bool _isDayEnabled(DateTime day) {
     return widget.enabledDayPredicate == null
         ? true
-        : widget.enabledDayPredicate(day);
+        : (widget.enabledDayPredicate!.call(day));
   }
 
-  DateTime _getEventKey(DateTime day) {
+  DateTime? _getEventKey(DateTime day) {
     return widget.calendarController._getEventKey(day);
   }
 
-  DateTime _getHolidayKey(DateTime day) {
+  DateTime? _getHolidayKey(DateTime day) {
     return widget.calendarController._getHolidayKey(day);
   }
 
@@ -406,7 +404,7 @@ class _TableCalendarState extends State<TableCalendar>
           onLongPress: _onHeaderLongPressed,
           child: Text(
             widget.headerStyle.titleTextBuilder != null
-                ? widget.headerStyle.titleTextBuilder(
+                ? widget.headerStyle.titleTextBuilder!.call(
                     widget.calendarController.focusedDay, widget.locale)
                 : DateFormat.yMMMM(widget.locale)
                     .format(widget.calendarController.focusedDay),
@@ -435,7 +433,7 @@ class _TableCalendarState extends State<TableCalendar>
 
     if (widget.todayWidget != null) {
       children.add(const SizedBox(width: 8.0));
-      children.add(widget.todayWidget);
+      children.add(widget.todayWidget!);
     }
 
     return Container(
@@ -495,7 +493,7 @@ class _TableCalendarState extends State<TableCalendar>
     }
   }
 
-  Widget _buildWrapper({Key key}) {
+  Widget _buildWrapper({Key? key}) {
     Widget wrappedChild = _buildTable();
 
     switch (widget.availableGestures) {
@@ -505,7 +503,7 @@ class _TableCalendarState extends State<TableCalendar>
             child: Column(
               children: [
                 wrappedChild,
-                widget.footer != null ? widget.footer : SizedBox()
+                widget.footer != null ? widget.footer! : SizedBox()
               ],
             ),
           ),
@@ -531,9 +529,9 @@ class _TableCalendarState extends State<TableCalendar>
     );
   }
 
-  Widget _buildVerticalSwipeWrapper({Widget child}) {
+  Widget _buildVerticalSwipeWrapper({Widget? child}) {
     return SimpleGestureDetector(
-      child: child,
+      child: child!,
       onVerticalSwipe: (direction) {
         setState(() {
           widget.calendarController
@@ -544,7 +542,7 @@ class _TableCalendarState extends State<TableCalendar>
     );
   }
 
-  Widget _buildHorizontalSwipeWrapper({Widget child}) {
+  Widget _buildHorizontalSwipeWrapper({Widget? child}) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 350),
       switchInCurve: Curves.decelerate,
@@ -557,13 +555,13 @@ class _TableCalendarState extends State<TableCalendar>
           child: child,
         );
       },
-      layoutBuilder: (currentChild, _) => currentChild,
+      layoutBuilder: (currentChild, _) => currentChild!,
       child: Dismissible(
         key: ValueKey(widget.calendarController._pageId),
         resizeDuration: null,
         onDismissed: _onHorizontalSwipe,
         direction: DismissDirection.horizontal,
-        child: child,
+        child: child!,
       ),
     );
   }
@@ -596,16 +594,16 @@ class _TableCalendarState extends State<TableCalendar>
       children:
           widget.calendarController._visibleDays.value.take(7).map((date) {
         final weekdayString = widget.daysOfWeekStyle.dowTextBuilder != null
-            ? widget.daysOfWeekStyle.dowTextBuilder(date, widget.locale)
+            ? widget.daysOfWeekStyle.dowTextBuilder!(date, widget.locale)
             : DateFormat.E(widget.locale).format(date);
         final isWeekend =
             widget.calendarController._isWeekend(date, widget.weekendDays);
 
         if (isWeekend && widget.builders.dowWeekendBuilder != null) {
-          return widget.builders.dowWeekendBuilder(context, weekdayString);
+          return widget.builders.dowWeekendBuilder!(context, weekdayString);
         }
         if (widget.builders.dowWeekdayBuilder != null) {
-          return widget.builders.dowWeekdayBuilder(context, weekdayString);
+          return widget.builders.dowWeekdayBuilder!(context, weekdayString);
         }
         return Center(
           child: Text(
@@ -655,7 +653,7 @@ class _TableCalendarState extends State<TableCalendar>
     if (key != null) {
       final children = <Widget>[content];
       final events = eventKey != null
-          ? widget.calendarController.visibleEvents[eventKey]
+          ? widget.calendarController.visibleEvents[eventKey]??[]
           : [];
       final holidays = holidayKey != null
           ? widget.calendarController.visibleHolidays[holidayKey]
@@ -664,11 +662,11 @@ class _TableCalendarState extends State<TableCalendar>
       if (!_isDayUnavailable(date)) {
         if (widget.builders.markersBuilder != null) {
           children.addAll(
-            widget.builders.markersBuilder(
+            widget.builders.markersBuilder!(
               context,
               key,
-              events,
-              holidays,
+              events??[],
+              holidays??[],
             ),
           );
         } else {
@@ -681,8 +679,8 @@ class _TableCalendarState extends State<TableCalendar>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: events
-                    .take(widget.calendarStyle.markersMaxAmount)
-                    .map((event) => _buildMarker(eventKey, event))
+                    !.take(widget.calendarStyle.markersMaxAmount)
+                    .map((event) => _buildMarker(eventKey!, event))
                     .toList(),
               ),
             ),
@@ -751,35 +749,35 @@ class _TableCalendarState extends State<TableCalendar>
         !tIsHoliday;
 
     if (isUnavailable) {
-      return widget.builders.unavailableDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.unavailableDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]??[]);
     } else if (isSelected && widget.calendarStyle.renderSelectedFirst) {
-      return widget.builders.selectedDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.selectedDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isToday) {
-      return widget.builders.todayDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.todayDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isSelected) {
-      return widget.builders.selectedDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.selectedDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isOutsideHoliday) {
-      return widget.builders.outsideHolidayDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.outsideHolidayDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isHoliday) {
-      return widget.builders.holidayDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.holidayDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isOutsideWeekend) {
-      return widget.builders.outsideWeekendDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.outsideWeekendDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isOutside) {
-      return widget.builders.outsideDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.outsideDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (isWeekend) {
-      return widget.builders.weekendDayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.weekendDayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else if (widget.builders.dayBuilder != null) {
-      return widget.builders.dayBuilder(
-          context, date, widget.calendarController.visibleEvents[eventKey]);
+      return widget.builders.dayBuilder!.call(
+          context, date, widget.calendarController.visibleEvents[eventKey]??[]);
     } else {
       return _CellWidget(
         text: '${date.day}',
@@ -797,7 +795,7 @@ class _TableCalendarState extends State<TableCalendar>
 
   Widget _buildMarker(DateTime date, dynamic event) {
     if (widget.builders.singleMarkerBuilder != null) {
-      return widget.builders.singleMarkerBuilder(context, date, event);
+      return widget.builders.singleMarkerBuilder!.call(context, date, event);
     } else {
       return Container(
         width: 8.0,

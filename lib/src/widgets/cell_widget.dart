@@ -15,8 +15,8 @@ class _CellWidget extends StatelessWidget {
   final CalendarStyle calendarStyle;
 
   const _CellWidget({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
     this.isUnavailable = false,
     this.isSelected = false,
     this.isToday = false,
@@ -24,10 +24,8 @@ class _CellWidget extends StatelessWidget {
     this.isOutsideMonth = false,
     this.isHoliday = false,
     this.isEventDay = false,
-    @required this.calendarStyle,
-  })  : assert(text != null),
-        assert(calendarStyle != null),
-        super(key: key);
+    required this.calendarStyle,
+  })  : super(key: key);
 
   @override
   Widget build(BuildContext context) {
